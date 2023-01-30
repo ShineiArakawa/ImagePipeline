@@ -25,3 +25,4 @@ hs_err_pid*
 **/build
 **/opencv-4.6.0
 !opencv-4.6.0.zip
+.vscode

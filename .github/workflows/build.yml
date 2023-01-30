@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
   
     steps:
+    - uses: actions/checkout@v3
+    - name: Echo current dir
+      run: echo pwd
     - name: cd to "lib"
       run: cd lib
     - name: Unzip OpenCV
@@ -33,6 +36,7 @@ jobs:
       run: cd ../../
       
   build:
+  
     runs-on: ubuntu-latest
     needs: [build_OpenCV]
     

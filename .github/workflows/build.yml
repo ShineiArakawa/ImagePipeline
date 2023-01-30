@@ -17,23 +17,23 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Echo current dir
-      run: pwd
+      run: currentdir=`pwd`
     - name: cd to "lib"
-      run: cd lib
+      run: cd lib && currentdir=`pwd`
     - name: Unzip OpenCV
       run: unzip opencv-4.6.0.zip
-    - name: cd to "opencv-4.6.0"
+    - name: cd to "opencv-4.6.0" && currentdir=`pwd`
       run: cd opencv-4.6.0
     - name: Make Directory "build"
       run: mkdir build
-    - name: cd to "build"
+    - name: cd to "build" && currentdir=`pwd`
       run: cd build
     - name: Run CMake
       run: cmake ..
     - name: Build OpenCV
       run: make -j
     - name: Go to repo home
-      run: cd ../../
+      run: cd ../../ && currentdir=`pwd`
       
   build:
   

@@ -23,7 +23,7 @@ First, clone this repository and build OpenCV. In this example, we are going to 
 If you want to use another version of OpenCV, you need to build following the instrunctions on [Link](https://opencv-java-tutorials.readthedocs.io/en/latest/01-installing-opencv-for-java.html#install-opencv-3-x-under-linux). The above site shows how to build OpenCV for Java using CMake-gui, but the CMakeLists.txt file in the built-in OpenCV has been rewritten to built without using CMake-gui.
 
 ```bash
-git clone git@github.com:ShineiArakawa/ImagePipeline.git
+git clone https://github.com/ShineiArakawa/ImagePipeline.git
 cd ImagePipeline
 
 cd lib

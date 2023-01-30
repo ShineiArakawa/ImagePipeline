@@ -1,4 +1,6 @@
 [![Java CI](https://github.com/ShineiArakawa/ImagePipeline/actions/workflows/build.yml/badge.svg)](https://github.com/ShineiArakawa/ImagePipeline/actions/workflows/build.yml)
+[![License](https://img.shields.io/badge/Java-Swing-blue)](https://img.shields.io/badge/Java-Swing-blue)
+[![License](https://img.shields.io/badge/-OpenCV-brightgreen)](https://img.shields.io/badge/-OpenCV-brightgreen)
 
 # ImagePipeline
 Fast editing GUI tool for large amount of images at one time.

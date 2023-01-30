@@ -4,7 +4,8 @@ import javax.swing.UIManager;
 
 import org.opencv.core.Core;
 
-import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatSolarizedDarkIJTheme;
+
 import ImagePipeline.control.MainControl;
 
 public class ImagePipelineMain {
@@ -14,7 +15,7 @@ public class ImagePipelineMain {
 
     public ImagePipelineMain(String[] args) {
         try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
+            UIManager.setLookAndFeel(new FlatSolarizedDarkIJTheme());
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }

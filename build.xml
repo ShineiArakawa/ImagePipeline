@@ -24,7 +24,7 @@
     <include name="log4j-1.2.16.jar" />
     <include name="flatlaf-3.0.jar" />
     <include name="flatlaf-intellij-themes-3.0.jar" />
-    <include name="opencv/bin/opencv-3416.jar" />
+    <include name="opencv-4.6.0/build/bin/opencv-460.jar" />
   </fileset>
 
   <!-- ********************************************************************************-->
@@ -35,7 +35,7 @@
 
   <!-- ********************************************************************************-->
   <fileset id="JAR_OPENCV" dir="${OPENCV_JAR_DIR}">
-    <include name="opencv-3416.jar" />
+    <include name="opencv-460.jar" />
   </fileset>
 
   <!-- ********************************************************************************-->

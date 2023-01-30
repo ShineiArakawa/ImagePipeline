@@ -2,22 +2,16 @@ package ImagePipeline.model.pipeline;
 
 import java.util.logging.Logger;
 
+import ImagePipeline.model.modules.Crop;
 import ImagePipeline.model.modules.Resize;
 import ImagePipeline.model.primitives.ImagePrimitive;
 import ImagePipeline.model.primitives.ModulePrimitive;
 import ImagePipeline.util.Common;
 
 public class Pipeline {
-    private static final String MODULE_NAME_RESIZE = "Resize";
-    private static final String MODULE_NAME_CROP = "Crop";
-    private static final String MODULE_NAME_ROTATION = "Rotation";
-    private static final String MODULE_NAME_CONVOLUTION = "Convolution";
-
     private static final String[] AVAILABLE_MODULE_NAMES = {
             Resize.MODULE_NAME,
-            MODULE_NAME_CROP,
-            MODULE_NAME_ROTATION,
-            MODULE_NAME_CONVOLUTION
+            Crop.MODULE_NAME
     };
 
     private Logger _logger;
@@ -59,8 +53,10 @@ public class Pipeline {
         ModulePrimitive module = null;
 
         if (moduleName != null) {
-            if (moduleName.equals(MODULE_NAME_RESIZE)) {
+            if (moduleName.equals(Resize.MODULE_NAME)) {
                 module = new Resize();
+            } else if (moduleName.equals(Crop.MODULE_NAME)) {
+                module = new Crop();
             } else {
                 logger.warning("Unknown module name: " + moduleName);
             }

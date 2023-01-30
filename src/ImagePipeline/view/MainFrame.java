@@ -17,7 +17,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.KeyListener;
 
 import java.io.File;
-import javax.swing.UIManager;
 import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
@@ -47,8 +46,8 @@ import ImagePipeline.util.FileUtil;
 import net.miginfocom.swing.MigLayout;
 
 public class MainFrame extends JFrame implements ActionListener, WindowListener {
-    private static final int DEFAULT_WINDOW_WIDTH = 800;
-    private static final int DEFAULT_WINDOW_HEIGHT = 800;
+    private static final int DEFAULT_WINDOW_WIDTH = 1000;
+    private static final int DEFAULT_WINDOW_HEIGHT = 600;
     private static final int MIN_WINDOW_WIDTH = 600;
     private static final int MIN_WINDOW_HEIGHT = 600;
     private static final String LABEL_PRE = "label.";
@@ -58,6 +57,9 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     public static final String COMMAND_FILE = "menu.file";
     public static final String COMMAND_FILE_OPEN_FOLDER = "menu.file.openFolder";
     public static final String COMMAND_FILE_EXIT = "menu.file.exit";
+
+    public static final String COMMAND_THEME = "menu.theme";
+
     public static final String COMMAND_ADD_MODULE = "command.addModule";
     public static final String COMMAND_REMOVE_MODULE = "command.removeModule";
     public static final String COMMAND_RUN_PIPELINE = "command.runPipeline";
@@ -99,11 +101,13 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     protected ModuleSelectionDialog _moduleSelectionDialog;
     protected ModuleConfigDialog _moduleConfigDialog;
     protected ImageViewerDialog _imageViewer;
+    protected ThemeManager _themeManager;
 
     public MainFrame(MainFrameEventListener eventListener) {
         super();
         _logger = Logger.getLogger(getClass().getName());
         _logger.setLevel(Common.GLOBAL_LOG_LEVEL);
+        _themeManager = new ThemeManager();
 
         addWindowListener(this);
         _rm = ResourceManager.getInstance();
@@ -144,12 +148,6 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     }
 
     private void buildUI() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         buildMenu();
         JPanel mainPanel = buildMainPanel();
 
@@ -162,15 +160,34 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         JMenuBar menubar = new JMenuBar();
         setJMenuBar(menubar);
 
+        JMenu menuFile = createMenu(COMMAND_FILE, "F");
+        menubar.add(menuFile);
+
         //@formatter:off
-        JMenu       menuFile                = createMenu(    COMMAND_FILE,                    "F");
         JMenuItem   miFileOpenFolder        = createMenuItem(COMMAND_FILE_OPEN_FOLDER,        "O");
         JMenuItem   miFileExit              = createMenuItem(COMMAND_FILE_EXIT,               "X");
         //@formatter:on
 
-        menubar.add(menuFile);
         menuFile.add(miFileOpenFolder);
         menuFile.add(miFileExit);
+
+        JMenu menuTheme = new JMenu(COMMAND_THEME);
+        menubar.add(menuTheme);
+        ArrayList<String> themes = _themeManager.getThemes();
+        ActionListener actionListenerForTheme = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String theme = e.getActionCommand();
+                _themeManager.setTheme(theme);
+            }
+        };
+        for (int i = 0; i < themes.size(); i++) {
+            String themeName = themes.get(i);
+            JMenuItem item = new JMenuItem(themeName);
+            item.addActionListener(actionListenerForTheme);
+            menuTheme.add(item);
+        }
+
     }
 
     private JPanel buildMainPanel() {
@@ -196,6 +213,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         JLabel labelInputDirPath = new JLabel(_rm.getString(strPre + "label"));
         _tfInputDirPath = new JTextField();
         _tfInputDirPath.setEditable(false);
+        _tfInputDirPath.setBorder(new EtchedBorder());
 
         _inputFileList = new JList<String>();
         _inputFileList.setBorder(new EtchedBorder());
@@ -265,6 +283,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         _labelOutputDirPath = new JLabel(_rm.getString(strPre + LABEL_OUTPUT_FOLDER));
 
         _tfOutputDirPath = new JTextField();
+        _tfOutputDirPath.setBorder(new EtchedBorder());
 
         _btOpenFileDialogOutputDirPath = createButton(COMMAND_OPEN_FILE_DIALOG_OUTPUT_DIR_PATH);
         _btAddModule = createButton(COMMAND_ADD_MODULE);
@@ -287,16 +306,16 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         _pipelinesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         _pipelinesList.setTransferHandler(new ListTransferHandler(_pipelinesList));
         _pipelinesList.setCellRenderer(new PipelineListCellRenderer());
-        _pipelinesList.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                if (evt.getClickCount() == 2) {
-                    int index = _pipelinesList.locationToIndex(evt.getPoint());
-                    if (index >= 0 && index < _pipelinesList.getModel().getSize()) {
-                        _eventListener.action(COMMAND_EDIT_MODULE, index);
-                    }
-                }
-            }
-        });
+        // _pipelinesList.addMouseListener(new MouseAdapter() {
+        //     public void mouseClicked(MouseEvent evt) {
+        //         if (evt.getClickCount() == 2) {
+        //             int index = _pipelinesList.locationToIndex(evt.getPoint());
+        //             if (index >= 0 && index < _pipelinesList.getModel().getSize()) {
+        //                 _eventListener.action(COMMAND_EDIT_MODULE, index);
+        //             }
+        //         }
+        //     }
+        // });
 
         JScrollPane scrollPaneForPipelinesList = new JScrollPane(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,

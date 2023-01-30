@@ -16,24 +16,25 @@ jobs:
   
     steps:
     - uses: actions/checkout@v3
+    
     - name: Echo current dir
       run: pwd
-    - name: cd to "lib"
-      run: cd lib && pwd
+    
     - name: Unzip OpenCV
       run: ls -la && unzip opencv-4.6.0.zip
-    - name: cd to "opencv-4.6.0" && pwd
-      run: cd opencv-4.6.0
+      working-directory: ./lib
+    
     - name: Make Directory "build"
       run: mkdir build
-    - name: cd to "build" && pwd
-      run: cd build
+      working-directory: ./lib/opencv-4.6.0
+
     - name: Run CMake
       run: cmake ..
+      working-directory: ./lib/opencv-4.6.0/build
+      
     - name: Build OpenCV
       run: make -j
-    - name: Go to repo home
-      run: cd ../../ && pwd
+      working-directory: ./lib/opencv-4.6.0/build
       
   build:
   

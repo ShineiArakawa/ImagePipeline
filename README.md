@@ -1,3 +1,5 @@
+[![Java CI](https://github.com/ShineiArakawa/ImagePipeline/actions/workflows/build.yml/badge.svg)](https://github.com/ShineiArakawa/ImagePipeline/actions/workflows/build.yml)
+
 # ImagePipeline
 Fast editing GUI tool for large amount of images at one time.
 

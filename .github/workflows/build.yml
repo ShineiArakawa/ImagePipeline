@@ -48,5 +48,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+    - name: Copy build.properties
+      run: cp build.properties_template build.properties
     - name: Build with Ant
       run: ant -noinput -buildfile build.xml

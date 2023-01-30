@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Echo current dir
-      run: echo pwd
+      run: pwd
     - name: cd to "lib"
       run: cd lib
     - name: Unzip OpenCV

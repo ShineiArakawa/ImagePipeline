@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/-OpenCV-brightgreen)](https://img.shields.io/badge/-OpenCV-brightgreen)
 
 # ImagePipeline
-Fast editing GUI tool for large amount of images at one time.
+Fast and scalable GUI tool for editing large amount of images at one time.
 
 ## Introduction
 A large number of images can be processed at once. Multi-threading allows for fast loading, editing, and saving of images, and converts large amounts of image data in a short period of time.

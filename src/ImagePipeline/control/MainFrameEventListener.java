@@ -8,7 +8,9 @@ public interface MainFrameEventListener {
 
     public void action(String command, String value);
 
-    public void addModule(ModulePrimitive module);
+    public void action(String command, int value);
+
+    public void addModule(ModulePrimitive module, int index);
 
     public void showErrorMessageDialog(String message, String title);
 

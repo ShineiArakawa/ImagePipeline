@@ -14,12 +14,12 @@ import ImagePipeline.util.Common;
 public abstract class ModulePrimitive {
     abstract public ImagePrimitive applyEach(ImagePrimitive image);
 
-    abstract public HashMap<String, ConfigPrimitive> getDefaultConfig();
+    abstract protected HashMap<String, ConfigPrimitive> getDefaultConfig();
 
     abstract public String getModuleName();
 
     Logger _logger;
-    protected HashMap<String, ConfigPrimitive> _config;
+    protected HashMap<String, ConfigPrimitive> _config = null;
 
     public ModulePrimitive() {
         _logger = Logger.getLogger(getClass().getName());
@@ -27,7 +27,13 @@ public abstract class ModulePrimitive {
     }
 
     public HashMap<String, ConfigPrimitive> getConfig() {
-        return _config;
+        HashMap<String, ConfigPrimitive> config = null;
+        if (_config == null) {
+            config = getDefaultConfig();
+        } else {
+            config = _config;
+        }
+        return config;
     }
 
     public void setConfig(HashMap<String, ConfigPrimitive> config) {

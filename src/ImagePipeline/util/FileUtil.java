@@ -7,15 +7,27 @@ import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 public class FileUtil {
+    public static String join(String dirPath, String filePath) {
+        String joinedPath = null;
+
+        if (dirPath != null && filePath != null) {
+            Path tmp_dirPath = Paths.get(dirPath);
+            Path tmp_filePath = Paths.get(filePath);
+            joinedPath = tmp_dirPath.resolve(tmp_filePath).toString();
+        }
+
+        return joinedPath;
+    }
+
     public static String[] join(String dirPath, String[] relativePaths) {
         String[] absPaths = null;
 
         if (dirPath != null && relativePaths != null) {
             absPaths = new String[relativePaths.length];
-            Path tmp_inputDirPath = Paths.get(dirPath);
+            Path tmp_dirPath = Paths.get(dirPath);
             for (int i = 0; i < relativePaths.length; i++) {
                 Path relativePath = Paths.get(relativePaths[i]);
-                absPaths[i] = tmp_inputDirPath.resolve(relativePath).toString();
+                absPaths[i] = tmp_dirPath.resolve(relativePath).toString();
             }
 
         }

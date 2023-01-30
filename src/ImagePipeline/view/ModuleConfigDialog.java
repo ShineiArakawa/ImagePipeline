@@ -43,6 +43,7 @@ public class ModuleConfigDialog extends JDialog implements ActionListener {
     protected ModulePrimitive _module;
     protected HashMap<String, ConfigPrimitive> _defaultConfig;
     protected Map<String, String> _mapConfigNames;
+    private int _edittingModuleIndex = -1;
 
     public ModuleConfigDialog(JFrame parent, MainFrameEventListener eventListener) {
         super(parent, true);
@@ -52,7 +53,6 @@ public class ModuleConfigDialog extends JDialog implements ActionListener {
         _rm = ResourceManager.getInstance();
         _eventListener = eventListener;
 
-        setWindowTitle(_rm.getString(KEY_PRE + "title"));
         buildUI();
 
         pack();
@@ -125,10 +125,14 @@ public class ModuleConfigDialog extends JDialog implements ActionListener {
         }
     }
 
+    public void setEdittingModuleIndex(int edittingModuleIndex) {
+        _edittingModuleIndex = edittingModuleIndex;
+    }
+
     public void initTable(ModulePrimitive module) {
         _module = module;
         _mapConfigNames = new HashMap<String, String>();
-        HashMap<String, ConfigPrimitive> config = module.getDefaultConfig();
+        HashMap<String, ConfigPrimitive> config = module.getConfig();
         _defaultConfig = config;
         int nConfigs = config.size();
 
@@ -160,6 +164,9 @@ public class ModuleConfigDialog extends JDialog implements ActionListener {
             _mapConfigNames.put(keyDisplay, key);
             counter++;
         }
+
+        String moduleName = _module.getModuleName();
+        setWindowTitle(moduleName);
 
         repaint();
     }
@@ -203,7 +210,7 @@ public class ModuleConfigDialog extends JDialog implements ActionListener {
         if (isOK) {
             _module.setConfig(configs);
             setVisible(false);
-            _eventListener.addModule(_module);
+            _eventListener.addModule(_module, _edittingModuleIndex);
         }
     }
 

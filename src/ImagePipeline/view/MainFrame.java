@@ -12,6 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.KeyListener;
 
 import java.io.File;
 import javax.swing.UIManager;
@@ -37,10 +40,10 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import ImagePipeline.control.MainFrameEventListener;
-import ImagePipeline.model.primitives.ConfigPrimitive;
 import ImagePipeline.model.primitives.ModulePrimitive;
 import ImagePipeline.resource.ResourceManager;
 import ImagePipeline.util.Common;
+import ImagePipeline.util.FileUtil;
 import net.miginfocom.swing.MigLayout;
 
 public class MainFrame extends JFrame implements ActionListener, WindowListener {
@@ -59,6 +62,9 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     public static final String COMMAND_REMOVE_MODULE = "command.removeModule";
     public static final String COMMAND_RUN_PIPELINE = "command.runPipeline";
     public static final String COMMAND_OPEN_FILE_DIALOG_OUTPUT_DIR_PATH = "command.openFileDialogOutputDirPath";
+    public static final String COMMAND_UPDATE_IMAGE_VIEWER = "command.updateImageViewer";
+
+    public static final String COMMAND_EDIT_MODULE = "command.editModule";
 
     protected static final String[] LIST_ALPHABETS = {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
@@ -92,6 +98,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     protected SimpleProgressDialog _pmLoadingImages;
     protected ModuleSelectionDialog _moduleSelectionDialog;
     protected ModuleConfigDialog _moduleConfigDialog;
+    protected ImageViewerDialog _imageViewer;
 
     public MainFrame(MainFrameEventListener eventListener) {
         super();
@@ -111,10 +118,13 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         setMinimumSize(new Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT));
 
         pack();
-        setLocationRelativeTo(null);
+        setLocationByPlatform(true);
+        // setAlwaysOnTop(true);
+        setAutoRequestFocus(true);
 
         _moduleSelectionDialog = new ModuleSelectionDialog(this, _eventListener);
         _moduleConfigDialog = new ModuleConfigDialog(this, _eventListener);
+        _imageViewer = new ImageViewerDialog(this, _eventListener);
     }
 
     private void setLogoIcon(String filePath) {
@@ -189,6 +199,41 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
 
         _inputFileList = new JList<String>();
         _inputFileList.setBorder(new EtchedBorder());
+        _inputFileList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 1 && _imageViewer.isVisible()) {
+                    int index = _inputFileList.locationToIndex(evt.getPoint());
+                    if (index >= 0 && index < _inputFileList.getModel().getSize()) {
+                        _eventListener.action(COMMAND_UPDATE_IMAGE_VIEWER, index);
+                    }
+                } else if (evt.getClickCount() == 2) {
+                    int index = _inputFileList.locationToIndex(evt.getPoint());
+                    if (index >= 0 && index < _inputFileList.getModel().getSize()) {
+                        _eventListener.action(COMMAND_UPDATE_IMAGE_VIEWER, index);
+                    }
+                }
+            }
+        });
+        _inputFileList.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int keyCode = e.getKeyCode();
+                if ((keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_DOWN) && _imageViewer.isVisible()) {
+                    int selectedIndex = _inputFileList.getSelectedIndex();
+                    _eventListener.action(COMMAND_UPDATE_IMAGE_VIEWER, selectedIndex);
+                }
+            }
+
+        });
+
         JScrollPane scrollPaneForInputFileList = new JScrollPane(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -242,6 +287,16 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         _pipelinesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         _pipelinesList.setTransferHandler(new ListTransferHandler(_pipelinesList));
         _pipelinesList.setCellRenderer(new PipelineListCellRenderer());
+        _pipelinesList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    int index = _pipelinesList.locationToIndex(evt.getPoint());
+                    if (index >= 0 && index < _pipelinesList.getModel().getSize()) {
+                        _eventListener.action(COMMAND_EDIT_MODULE, index);
+                    }
+                }
+            }
+        });
 
         JScrollPane scrollPaneForPipelinesList = new JScrollPane(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -310,7 +365,6 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     }
 
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
         String command = e.getActionCommand();
         if (command != null) {
             _eventListener.action(command);
@@ -382,15 +436,31 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     }
 
     public void showModuleSelectionDialog(String[] moduleNames) {
-        _moduleSelectionDialog.setModuleNames(moduleNames);
-        _moduleSelectionDialog.setLocationRelativeTo(this);
-        _moduleSelectionDialog.setVisible(true);
+        if (moduleNames != null) {
+            _moduleSelectionDialog.setModuleNames(moduleNames);
+            _moduleSelectionDialog.setLocationRelativeTo(this);
+            _moduleSelectionDialog.setVisible(true);
+        }
     }
 
     public void showModuleConfigDialog(ModulePrimitive module) {
-        _moduleConfigDialog.initTable(module);
-        _moduleConfigDialog.setLocationRelativeTo(this);
-        _moduleConfigDialog.setVisible(true);
+        if (module != null) {
+            _moduleConfigDialog.setEdittingModuleIndex(-1);
+            _moduleConfigDialog.initTable(module);
+            _moduleConfigDialog.setLocationRelativeTo(this);
+            _moduleConfigDialog.setVisible(true);
+        }
+    }
+
+    public void showModuleConfigEditDialog(int index) {
+        ModulePrimitive module = getModule(index);
+
+        if (module != null) {
+            _moduleConfigDialog.setEdittingModuleIndex(index);
+            _moduleConfigDialog.initTable(module);
+            _moduleConfigDialog.setLocationRelativeTo(this);
+            _moduleConfigDialog.setVisible(true);
+        }
     }
 
     public SimpleProgressDialog showProgressBarLoadingImage(String title, String message, int min, int max) {
@@ -428,6 +498,19 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         }
     }
 
+    public void refreshImageViewer(int index) {
+        String parentDir = getInputDirPath();
+        String filePath = getInputFilePath(index);
+        filePath = FileUtil.join(parentDir, filePath);
+
+        _imageViewer.loadImage(filePath);
+
+        if (!_imageViewer.isVisible()) {
+            _imageViewer.setVisible(true);
+        }
+
+    }
+
     public ModulePrimitive[] getListedModules() {
         ListModel<ModulePrimitive> model = _pipelinesList.getModel();
         ModulePrimitive[] modules = null;
@@ -442,6 +525,17 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         }
 
         return modules;
+    }
+
+    public String getInputFilePath(int index) {
+        ListModel<String> model = _inputFileList.getModel();
+        String inputFilePath = null;
+
+        if (model != null && index >= 0 && index < model.getSize()) {
+            inputFilePath = model.getElementAt(index);
+        }
+
+        return inputFilePath;
     }
 
     public String[] getInputFilePaths() {
@@ -460,12 +554,24 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         return inputFilePaths;
     }
 
-    public ModulePrimitive getSelectedModuleName() {
-        ModulePrimitive moduleName = null;
-        if (_pipelinesList != null) {
-            moduleName = _pipelinesList.getSelectedValue();
+    public ModulePrimitive getModule(int index) {
+        ListModel<ModulePrimitive> model = _pipelinesList.getModel();
+        int nModules = model.getSize();
+        ModulePrimitive module = null;
+
+        if (model != null && index >= 0 && index < nModules) {
+            module = model.getElementAt(index);
         }
-        return moduleName;
+
+        return module;
+    }
+
+    public ModulePrimitive getSelectedModule() {
+        ModulePrimitive module = null;
+        if (_pipelinesList != null) {
+            module = _pipelinesList.getSelectedValue();
+        }
+        return module;
     }
 
     public int getSelectedModuleindex() {
@@ -495,15 +601,24 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         repaint();
     }
 
-    public void addModule(ModulePrimitive module) {
+    public void addModule(ModulePrimitive module, int index) {
         if (module != null) {
             ListModel<ModulePrimitive> model = _pipelinesList.getModel();
             DefaultListModel<ModulePrimitive> newModel = new DefaultListModel<ModulePrimitive>();
+            boolean isEditMode = false;
 
             for (int iModule = 0; iModule < model.getSize(); iModule++) {
-                newModel.addElement(model.getElementAt(iModule));
+                if (iModule == index) {
+                    isEditMode = true;
+                    newModel.addElement(module);
+                } else {
+                    newModel.addElement(model.getElementAt(iModule));
+                }
             }
-            newModel.addElement(module);
+
+            if (!isEditMode) {
+                newModel.addElement(module);
+            }
 
             _pipelinesList.setModel(newModel);
             repaint();

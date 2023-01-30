@@ -76,11 +76,21 @@ public class MainControl implements MainFrameEventListener {
 
     @Override
     public void action(String command, String value) {
-        _logger.info("Action on command : " + command);
+        _logger.info("Action on command : " + command + ", Value: " + value);
         if (command.equalsIgnoreCase(ModuleSelectionDialog.COMMAND_ADD)) {
             showModuleConfigDialog(value);
-        } else if (command.equalsIgnoreCase(MainFrame.COMMAND_FILE_OPEN_FOLDER)) {
+        } else {
+            _logger.info("nothing to do");
+        }
+    }
 
+    @Override
+    public void action(String command, int value) {
+        _logger.info("Action on command : " + command + ", Value: " + value);
+        if (command.equalsIgnoreCase(MainFrame.COMMAND_EDIT_MODULE)) {
+            showModuleConfigEditDialog(value);
+        } else if (command.equalsIgnoreCase(MainFrame.COMMAND_UPDATE_IMAGE_VIEWER)) {
+            _mainFrame.refreshImageViewer(value);
         } else {
             _logger.info("nothing to do");
         }
@@ -134,13 +144,17 @@ public class MainControl implements MainFrameEventListener {
         }
     };
 
+    private void showModuleConfigEditDialog(int index) {
+        _mainFrame.showModuleConfigEditDialog(index);
+    };
+
     public SimpleProgressDialog showProgressBarLoadingImage(String title, String message, int min, int max) {
         return _mainFrame.showProgressBarLoadingImage(title, message, min, max);
     }
 
-    public void addModule(ModulePrimitive module) {
+    public void addModule(ModulePrimitive module, int index) {
         if (module != null) {
-            _mainFrame.addModule(module);
+            _mainFrame.addModule(module, index);
         }
     }
 

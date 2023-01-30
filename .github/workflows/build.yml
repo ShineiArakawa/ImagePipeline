@@ -33,7 +33,7 @@ jobs:
       working-directory: ./lib/opencv-4.6.0/build
       
     - name: Build OpenCV
-      run: make -j
+      run: make
       working-directory: ./lib/opencv-4.6.0/build
       
   build:

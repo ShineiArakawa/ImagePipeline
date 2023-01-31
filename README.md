@@ -26,7 +26,7 @@ The following libraries are necessary to build this program.
 ## How to build
 First, clone this repository and build OpenCV. In this example, we are going to build OpenCV library in the ```lib``` folder.
 If you want to use another version of OpenCV, you need to build following the instrunctions on [Link](https://opencv-java-tutorials.readthedocs.io/en/latest/01-installing-opencv-for-java.html#install-opencv-3-x-under-linux). The above site shows how to build OpenCV for Java using ```cmake-gui```.
-Yet, using CMakeLists.txt file in the OpenCV folder of our repo,  you can built without using ```cmake-gui```.
+Yet, using ```CMakeLists.txt``` file in the OpenCV folder of our repo,  you can built without using ```cmake-gui```.
 
 ```bash
 git clone https://github.com/ShineiArakawa/ImagePipeline.git

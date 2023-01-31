@@ -1,7 +1,7 @@
 package ImagePipeline.control;
 
 import ImagePipeline.model.primitives.ModulePrimitive;
-import ImagePipeline.view.SimpleProgressDialog;
+import ImagePipeline.view.ProgressDialogWorker;
 
 public interface MainFrameEventListener {
     public void action(String command);
@@ -14,6 +14,5 @@ public interface MainFrameEventListener {
 
     public void showErrorMessageDialog(String message, String title);
 
-    public SimpleProgressDialog showProgressBarLoadingImage(String title, String message, int min, int max);
-
+    public void showProgressDialog(String title, int max, ProgressDialogWorker worker);
 }

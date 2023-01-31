@@ -14,7 +14,6 @@ import java.awt.Color;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -29,6 +28,7 @@ public class ImageViewerDialog extends JFrame implements ActionListener {
     private static final int DEFAULT_WINDOW_HEIGHT = 800;
     private static final int MIN_WINDOW_WIDTH = 400;
     private static final int MIN_WINDOW_HEIGHT = 400;
+
     private static final String KEY_PRE = "dialog.imageViewer.";
 
     private Logger _logger;
@@ -84,6 +84,7 @@ public class ImageViewerDialog extends JFrame implements ActionListener {
             BufferedImage img = null;
             try {
                 img = ImageIO.read(new File(filePath));
+                setTitle(String.format("%s : %d x %d", filePath, img.getWidth(), img.getHeight()));
             } catch (IOException e) {
                 _logger.warning("Failed to load image: " + filePath);
             }

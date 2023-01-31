@@ -97,7 +97,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     protected JLabel _labelOutputDirPath;
     protected JTextField _tfInputDirPath;
     protected JTextField _tfOutputDirPath;
-    protected SimpleProgressDialog _pmLoadingImages;
+    protected ProgressDialog _progressDialog;
     protected ModuleSelectionDialog _moduleSelectionDialog;
     protected ModuleConfigDialog _moduleConfigDialog;
     protected ImageViewerDialog _imageViewer;
@@ -129,6 +129,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         _moduleSelectionDialog = new ModuleSelectionDialog(this, _eventListener);
         _moduleConfigDialog = new ModuleConfigDialog(this, _eventListener);
         _imageViewer = new ImageViewerDialog(this, _eventListener);
+        _progressDialog = new ProgressDialog(this);
     }
 
     private void setLogoIcon(String filePath) {
@@ -306,16 +307,16 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         _pipelinesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         _pipelinesList.setTransferHandler(new ListTransferHandler(_pipelinesList));
         _pipelinesList.setCellRenderer(new PipelineListCellRenderer());
-        // _pipelinesList.addMouseListener(new MouseAdapter() {
-        //     public void mouseClicked(MouseEvent evt) {
-        //         if (evt.getClickCount() == 2) {
-        //             int index = _pipelinesList.locationToIndex(evt.getPoint());
-        //             if (index >= 0 && index < _pipelinesList.getModel().getSize()) {
-        //                 _eventListener.action(COMMAND_EDIT_MODULE, index);
-        //             }
-        //         }
-        //     }
-        // });
+        _pipelinesList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    int index = _pipelinesList.locationToIndex(evt.getPoint());
+                    if (index >= 0 && index < _pipelinesList.getModel().getSize()) {
+                        _eventListener.action(COMMAND_EDIT_MODULE, index);
+                    }
+                }
+            }
+        });
 
         JScrollPane scrollPaneForPipelinesList = new JScrollPane(
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -482,10 +483,9 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         }
     }
 
-    public SimpleProgressDialog showProgressBarLoadingImage(String title, String message, int min, int max) {
-        _pmLoadingImages = new SimpleProgressDialog(this, false);
-        _pmLoadingImages.init(title, message, min, max);
-        return _pmLoadingImages;
+    public void showProgressDialog(String title, int max, ProgressDialogWorker worker) {
+        _progressDialog.init(max, worker);
+        _progressDialog.setTitle(title);
     }
 
     public void refreshInputFilesList(String[] inputFileList) {

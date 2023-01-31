@@ -173,7 +173,6 @@ public class ModuleConfigDialog extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
         String command = e.getActionCommand();
         _logger.info("[ModuleConfigDialog] Action on command : " + command);
         if (command.equalsIgnoreCase(COMMAND_CANCEL)) {

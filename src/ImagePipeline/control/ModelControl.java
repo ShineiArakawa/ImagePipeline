@@ -14,6 +14,7 @@ import ImagePipeline.model.primitives.ModulePrimitive;
 import ImagePipeline.resource.ResourceManager;
 import ImagePipeline.util.Common;
 import ImagePipeline.util.FileUtil;
+import ImagePipeline.view.ProgressDialogWorker;
 
 public class ModelControl {
     private Logger _logger;

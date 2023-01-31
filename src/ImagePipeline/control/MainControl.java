@@ -11,7 +11,7 @@ import ImagePipeline.model.primitives.ModulePrimitive;
 import ImagePipeline.resource.ResourceManager;
 import ImagePipeline.view.MainFrame;
 import ImagePipeline.view.ModuleSelectionDialog;
-import ImagePipeline.view.SimpleProgressDialog;
+import ImagePipeline.view.ProgressDialogWorker;
 
 public class MainControl implements MainFrameEventListener {
     private static final String[] DEFAULT_AVAILABLE_EXTENSIONS = {
@@ -148,8 +148,8 @@ public class MainControl implements MainFrameEventListener {
         _mainFrame.showModuleConfigEditDialog(index);
     };
 
-    public SimpleProgressDialog showProgressBarLoadingImage(String title, String message, int min, int max) {
-        return _mainFrame.showProgressBarLoadingImage(title, message, min, max);
+    public void showProgressDialog(String title, int max, ProgressDialogWorker worker) {
+        _mainFrame.showProgressDialog(title, max, worker);
     }
 
     public void addModule(ModulePrimitive module, int index) {

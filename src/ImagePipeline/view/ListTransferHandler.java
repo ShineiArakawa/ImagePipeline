@@ -3,8 +3,6 @@ package ImagePipeline.view;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -19,6 +17,7 @@ class ListTransferHandler extends TransferHandler {
     private int _index;
     private boolean _beforeIndex = false;
     private JList<ModulePrimitive> _pipelinesList = null;
+    private ModulePrimitive _buffer = null;
 
     public ListTransferHandler(JList<ModulePrimitive> pipelinesList) {
         _pipelinesList = pipelinesList;
@@ -32,6 +31,7 @@ class ListTransferHandler extends TransferHandler {
     @Override
     public Transferable createTransferable(JComponent comp) {
         _index = _pipelinesList.getSelectedIndex();
+        _buffer = _pipelinesList.getModel().getElementAt(_index);
         return new StringSelection(_pipelinesList.getSelectedValue().getModuleName());
     }
 
@@ -54,19 +54,17 @@ class ListTransferHandler extends TransferHandler {
 
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
-
         try {
             ArrayList<ModulePrimitive> model = getListModelArray();
-            ModulePrimitive s = (ModulePrimitive) support.getTransferable().getTransferData(DataFlavor.stringFlavor);
-            JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
-            model.add(dl.getIndex(), s);
-            _beforeIndex = dl.getIndex() < _index ? true : false;
+            JList.DropLocation dropLocation = (JList.DropLocation) support.getDropLocation();
+            int dropLocationIndex = dropLocation.getIndex();
+            _beforeIndex = dropLocationIndex < _index ? true : false;
+            model.add(dropLocationIndex, _buffer);
             setListModelArray(model);
             return true;
-        } catch (UnsupportedFlavorException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
         return false;
     }
 
@@ -89,6 +87,7 @@ class ListTransferHandler extends TransferHandler {
         for (int iModule = 0; iModule < nModules; iModule++) {
             model.addElement(moduleNames.get(iModule));
         }
+
         _pipelinesList.setModel(model);
     }
 }

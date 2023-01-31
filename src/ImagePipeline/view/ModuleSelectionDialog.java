@@ -110,7 +110,6 @@ public class ModuleSelectionDialog extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
         String command = e.getActionCommand();
         _logger.info("[ModuleSelectionDialog] Action on command : " + command);
         if (command.equalsIgnoreCase(COMMAND_CANCEL)) {

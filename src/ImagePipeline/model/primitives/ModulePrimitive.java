@@ -1,5 +1,6 @@
 package ImagePipeline.model.primitives;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -11,7 +12,7 @@ import java.util.logging.Logger;
 
 import ImagePipeline.util.Common;
 
-public abstract class ModulePrimitive {
+public abstract class ModulePrimitive implements Serializable {
     abstract public ImagePrimitive applyEach(ImagePrimitive image);
 
     abstract protected HashMap<String, ConfigPrimitive> getDefaultConfig();

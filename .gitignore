@@ -27,3 +27,4 @@ hs_err_pid*
 !opencv-4.6.0.zip
 .vscode
 **/.DS_Store
+release

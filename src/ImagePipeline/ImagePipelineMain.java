@@ -2,11 +2,8 @@ package ImagePipeline;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.URL;
-
+import java.lang.UnsatisfiedLinkError;
 import javax.swing.UIManager;
 
 import org.opencv.core.Core;
@@ -14,7 +11,6 @@ import org.opencv.core.Core;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatSolarizedDarkIJTheme;
 
 import ImagePipeline.control.MainControl;
-import ImagePipeline.util.Common;
 
 public class ImagePipelineMain {
     public static void main(String[] args) {
@@ -22,16 +18,26 @@ public class ImagePipelineMain {
     }
 
     public ImagePipelineMain(String[] args) {
+        // Link FlatLaf
         try {
             UIManager.setLookAndFeel(new FlatSolarizedDarkIJTheme());
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
 
-        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            loadJarDll(Core.NATIVE_LIBRARY_NAME + ".dll");
-        }else {
-            loadJarDll("lib" + Core.NATIVE_LIBRARY_NAME + ".dylib");
+        // Link OpenCV
+        try {
+            // for "ant run"
+            System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        } catch (UnsatisfiedLinkError e) {
+            // for "ant jar"
+            if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+                // for Windows
+                loadJarDll(Core.NATIVE_LIBRARY_NAME + ".dll");
+            } else {
+                // for UNIX
+                loadJarDll("lib" + Core.NATIVE_LIBRARY_NAME + ".dylib");
+            }
         }
 
         MainControl mainControl = new MainControl(args);

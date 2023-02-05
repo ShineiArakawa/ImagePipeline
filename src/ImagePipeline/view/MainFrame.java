@@ -121,7 +121,13 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         setWindowTitle(_rm.getString("window.main.title"));
-        setLogoIcon(Common.LOGO_FILE_PATH);
+        
+        try {
+            setLogoIcon(Common.LOGO_FILE_PATH);
+        } catch (Exception e) {
+            setLogoIconForJar(Common.LOGO_FILE_PATH_FOR_JAR);
+        }
+        
         buildUI();
         setPreferredSize(new Dimension(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT));
         setMinimumSize(new Dimension(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT));
@@ -138,6 +144,16 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
     }
 
     private void setLogoIcon(String filePath) {
+        if (filePath != null) {
+            ImageIcon icon = new ImageIcon(filePath);
+            if (icon != null) {
+                setIconImage(icon.getImage());
+                super.setIconImage(icon.getImage());
+            }
+        }
+    }
+
+    private void setLogoIconForJar(String filePath) {
         if (filePath != null) {
             BufferedImage icon;
             try {

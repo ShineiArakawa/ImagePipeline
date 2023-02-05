@@ -115,6 +115,7 @@
   <target name="run" depends="compile">
     <java classname="${MAIN_CLASS}" fork="true">
       <classpath refid="base.classpath" />
+      <sysproperty key="java.library.path" path="${OPENCV_LIB_DIR}" />
       <jvmarg value="-Xmx${MAX_HEAP_IN_MB}M" />
       <arg line="${ARGS}" />
     </java>

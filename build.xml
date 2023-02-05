@@ -115,7 +115,6 @@
   <target name="run" depends="compile">
     <java classname="${MAIN_CLASS}" fork="true">
       <classpath refid="base.classpath" />
-      <!-- <sysproperty key="java.library.path" path="${OPENCV_LIB_DIR}" /> -->
       <jvmarg value="-Xmx${MAX_HEAP_IN_MB}M" />
       <arg line="${ARGS}" />
     </java>
@@ -137,67 +136,6 @@
         <include name="logo.png" />
       </fileset>
     </jar>
-  </target>
-
-  <!-- ********************************************************************************-->
-  <target name="release" depends="jar">
-
-    <property name="DIR_RELEASE_32"
-      value="${DIR_RELEASE}/${DIR_RELEASE}_${DSTAMP}/32bit/${DIR_PRODUCT}" />
-    <property name="DIR_RELEASE_64"
-      value="${DIR_RELEASE}/${DIR_RELEASE}_${DSTAMP}/64bit/${DIR_PRODUCT}" />
-
-    <mkdir dir="${DIR_RELEASE_32}" />
-    <mkdir dir="${DIR_RELEASE_64}" />
-
-    <copy preservelastmodified="true" file="${DIR_JAR}/${JAR_NAME}-${DSTAMP}.jar"
-      tofile="${DIR_RELEASE_32}/${JAR_NAME}.jar" />
-    <copy preservelastmodified="true" file="${DIR_JAR}/${JAR_NAME}-${DSTAMP}.jar"
-      tofile="${DIR_RELEASE_64}/${JAR_NAME}.jar" />
-
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_32}/${DIR_SAMPLES}">
-      <fileset refid="SAMPLES" />
-    </copy>
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_64}/${DIR_SAMPLES}">
-      <fileset refid="SAMPLES" />
-    </copy>
-
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_32}/jdk">
-      <fileset dir="${DIR_JDK_32bit}" />
-    </copy>
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_64}/jdk">
-      <fileset dir="${DIR_JDK_64bit}" />
-    </copy>
-
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_32}/${DIR_LIB}">
-      <fileset refid="JAR_LIBRARIES" />
-    </copy>
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_64}/${DIR_LIB}">
-      <fileset refid="JAR_LIBRARIES" />
-    </copy>
-
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_32}/${DIR_JOGL_LIB}">
-      <fileset refid="JAR_JOGL" />
-    </copy>
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_64}/${DIR_JOGL_LIB}">
-      <fileset refid="JAR_JOGL" />
-    </copy>
-
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_32}/${DIR_LIB_OPENCV}">
-      <fileset refid="JAR_OPENCV" />
-    </copy>
-    <copy preservelastmodified="true" todir="${DIR_RELEASE_64}/${DIR_LIB_OPENCV}">
-      <fileset refid="JAR_OPENCV" />
-    </copy>
-
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_1_32}"
-      tofile="${DIR_RELEASE_32}/${DIR_JOGL_LIB}/${JOGL_NATIVE_1_32}" />
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_1_64}"
-      tofile="${DIR_RELEASE_64}/${DIR_JOGL_LIB}/${JOGL_NATIVE_1_64}" />
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_2_32}"
-      tofile="${DIR_RELEASE_32}/${DIR_JOGL_LIB}/${JOGL_NATIVE_2_32}" />
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_2_64}"
-      tofile="${DIR_RELEASE_64}/${DIR_JOGL_LIB}/${JOGL_NATIVE_2_64}" />
   </target>
 
   <!-- ********************************************************************************-->

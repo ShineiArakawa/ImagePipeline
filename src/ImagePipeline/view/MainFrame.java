@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
+import java.awt.Image;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.Container;
@@ -12,11 +13,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.KeyListener;
 
 import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
@@ -134,10 +139,15 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
 
     private void setLogoIcon(String filePath) {
         if (filePath != null) {
-            ImageIcon icon = new ImageIcon(filePath);
-            if (icon != null) {
-                setIconImage(icon.getImage());
-                super.setIconImage(icon.getImage());
+            BufferedImage icon;
+            try {
+                icon = ImageIO.read(getClass().getClassLoader().getResource(filePath));
+                if (icon != null) {
+                    setIconImage(icon);
+                    super.setIconImage(icon);
+                }
+            } catch (IOException e) {
+                _logger.warning("Failed to load icon image.");
             }
         }
     }
@@ -172,7 +182,7 @@ public class MainFrame extends JFrame implements ActionListener, WindowListener 
         menuFile.add(miFileOpenFolder);
         menuFile.add(miFileExit);
 
-        JMenu menuTheme = new JMenu(COMMAND_THEME);
+        JMenu menuTheme = new JMenu(_rm.getString(COMMAND_THEME));
         menubar.add(menuTheme);
         ArrayList<String> themes = _themeManager.getThemes();
         ActionListener actionListenerForTheme = new ActionListener() {

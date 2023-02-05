@@ -4,6 +4,7 @@
   <property name="DIR_SOURCE" value="src" />
   <property name="DIR_CLASS" value="classes" />
   <property name="DIR_DOC" value="doc" />
+  <property name="DIR_ASSETS" value="assets" />
   <property name="DIR_JAR" value="jar" />
   <property name="DIR_JAVADOC" value="javadocs" />
   <property name="DIR_LIB" value="lib" />
@@ -48,7 +49,10 @@
     <fileset refid="JAR_LIBRARIES" />
     <fileset refid="JAR_JOGL" />
     <fileset refid="JAR_OPENCV" />
-    <fileset dir="${OPENCV_JAR_DIR}" includes="**/*.jar"/>
+    <fileset dir="${OPENCV_JAR_DIR}" includes="**/*.jar" />
+    <fileset dir="${OPENCV_LIB_DIR}" includes="**/*.dll" />
+    <fileset dir="${OPENCV_LIB_DIR}" includes="**/*.so" />
+    <fileset dir="${OPENCV_LIB_DIR}" includes="**/*.o" />
   </path>
 
   <!-- ********************************************************************************-->
@@ -84,7 +88,9 @@
 
   <!-- ********************************************************************************-->
   <target name="native2ascii">
-    <native2ascii src="${DIR_SOURCE}/${PACKAGE_PATH}/resource" dest="${DIR_SOURCE}/${PACKAGE_PATH}/resource" includes="*.sjis" encoding="Windows-31J" ext=".properties">
+    <native2ascii src="${DIR_SOURCE}/${PACKAGE_PATH}/resource"
+      dest="${DIR_SOURCE}/${PACKAGE_PATH}/resource" includes="*.sjis" encoding="Windows-31J"
+      ext=".properties">
     </native2ascii>
   </target>
 
@@ -99,7 +105,9 @@
 
   <!-- ********************************************************************************-->
   <target name="compile" depends="prepare, resource, native2ascii, copy">
-    <javac deprecation="yes" srcdir="${DIR_SOURCE}" destdir="${DIR_CLASS}" encoding="Windows-31J" debug="true" includeantruntime="false" classpathref="base.classpath" sourcepath="${DIR_SOURCE}">
+    <javac deprecation="yes" srcdir="${DIR_SOURCE}" destdir="${DIR_CLASS}" encoding="Windows-31J"
+      debug="true" includeantruntime="false" classpathref="base.classpath"
+      sourcepath="${DIR_SOURCE}">
     </javac>
   </target>
 
@@ -107,7 +115,7 @@
   <target name="run" depends="compile">
     <java classname="${MAIN_CLASS}" fork="true">
       <classpath refid="base.classpath" />
-      <sysproperty key="java.library.path" path="${OPENCV_LIB_DIR}"/>
+      <!-- <sysproperty key="java.library.path" path="${OPENCV_LIB_DIR}" /> -->
       <jvmarg value="-Xmx${MAX_HEAP_IN_MB}M" />
       <arg line="${ARGS}" />
     </java>
@@ -117,20 +125,35 @@
   <target name="jar" depends="clean, compile">
     <mkdir dir="${DIR_JAR}" />
     <jar jarfile="${DIR_JAR}/${JAR_NAME}-${DSTAMP}.jar" basedir="${DIR_CLASS}">
+      <zipgroupfileset dir="lib" includes="**/*.jar" />
+      <manifest>
+        <attribute name="Main-Class" value="${MAIN_CLASS}" />
+        <attribute name="Class-Path" value="${DIR_CLASS}" />
+      </manifest>
+      <fileset dir="${OPENCV_LIB_DIR}">
+        <include name="opencv_java460.dll" />
+      </fileset>
+      <fileset dir="${DIR_ASSETS}">
+        <include name="logo.png" />
+      </fileset>
     </jar>
   </target>
 
   <!-- ********************************************************************************-->
   <target name="release" depends="jar">
 
-    <property name="DIR_RELEASE_32" value="${DIR_RELEASE}/${DIR_RELEASE}_${DSTAMP}/32bit/${DIR_PRODUCT}" />
-    <property name="DIR_RELEASE_64" value="${DIR_RELEASE}/${DIR_RELEASE}_${DSTAMP}/64bit/${DIR_PRODUCT}" />
+    <property name="DIR_RELEASE_32"
+      value="${DIR_RELEASE}/${DIR_RELEASE}_${DSTAMP}/32bit/${DIR_PRODUCT}" />
+    <property name="DIR_RELEASE_64"
+      value="${DIR_RELEASE}/${DIR_RELEASE}_${DSTAMP}/64bit/${DIR_PRODUCT}" />
 
     <mkdir dir="${DIR_RELEASE_32}" />
     <mkdir dir="${DIR_RELEASE_64}" />
 
-    <copy preservelastmodified="true" file="${DIR_JAR}/${JAR_NAME}-${DSTAMP}.jar" tofile="${DIR_RELEASE_32}/${JAR_NAME}.jar" />
-    <copy preservelastmodified="true" file="${DIR_JAR}/${JAR_NAME}-${DSTAMP}.jar" tofile="${DIR_RELEASE_64}/${JAR_NAME}.jar" />
+    <copy preservelastmodified="true" file="${DIR_JAR}/${JAR_NAME}-${DSTAMP}.jar"
+      tofile="${DIR_RELEASE_32}/${JAR_NAME}.jar" />
+    <copy preservelastmodified="true" file="${DIR_JAR}/${JAR_NAME}-${DSTAMP}.jar"
+      tofile="${DIR_RELEASE_64}/${JAR_NAME}.jar" />
 
     <copy preservelastmodified="true" todir="${DIR_RELEASE_32}/${DIR_SAMPLES}">
       <fileset refid="SAMPLES" />
@@ -167,10 +190,14 @@
       <fileset refid="JAR_OPENCV" />
     </copy>
 
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_1_32}" tofile="${DIR_RELEASE_32}/${DIR_JOGL_LIB}/${JOGL_NATIVE_1_32}" />
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_1_64}" tofile="${DIR_RELEASE_64}/${DIR_JOGL_LIB}/${JOGL_NATIVE_1_64}" />
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_2_32}" tofile="${DIR_RELEASE_32}/${DIR_JOGL_LIB}/${JOGL_NATIVE_2_32}" />
-    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_2_64}" tofile="${DIR_RELEASE_64}/${DIR_JOGL_LIB}/${JOGL_NATIVE_2_64}" />
+    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_1_32}"
+      tofile="${DIR_RELEASE_32}/${DIR_JOGL_LIB}/${JOGL_NATIVE_1_32}" />
+    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_1_64}"
+      tofile="${DIR_RELEASE_64}/${DIR_JOGL_LIB}/${JOGL_NATIVE_1_64}" />
+    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_2_32}"
+      tofile="${DIR_RELEASE_32}/${DIR_JOGL_LIB}/${JOGL_NATIVE_2_32}" />
+    <copy preservelastmodified="true" file="${DIR_JOGL_LIB}/${JOGL_NATIVE_2_64}"
+      tofile="${DIR_RELEASE_64}/${DIR_JOGL_LIB}/${JOGL_NATIVE_2_64}" />
   </target>
 
   <!-- ********************************************************************************-->

@@ -27,7 +27,12 @@ public class ImagePipelineMain {
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
-        loadJarDll(Core.NATIVE_LIBRARY_NAME + ".dll");
+
+        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+            loadJarDll(Core.NATIVE_LIBRARY_NAME + ".dll");
+        }else {
+            loadJarDll("lib" + Core.NATIVE_LIBRARY_NAME + ".dylib");
+        }
 
         MainControl mainControl = new MainControl(args);
         mainControl.start();

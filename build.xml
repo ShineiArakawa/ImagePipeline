@@ -25,7 +25,6 @@
     <include name="log4j-1.2.16.jar" />
     <include name="flatlaf-3.0.jar" />
     <include name="flatlaf-intellij-themes-3.0.jar" />
-    <include name="opencv-4.6.0/build/bin/opencv-460.jar" />
   </fileset>
 
   <!-- ********************************************************************************-->
@@ -36,7 +35,7 @@
 
   <!-- ********************************************************************************-->
   <fileset id="JAR_OPENCV" dir="${OPENCV_JAR_DIR}">
-    <include name="opencv-460.jar" />
+    <include name="**/*.jar" />
   </fileset>
 
   <!-- ********************************************************************************-->
@@ -53,6 +52,7 @@
     <fileset dir="${OPENCV_LIB_DIR}" includes="**/*.dll" />
     <fileset dir="${OPENCV_LIB_DIR}" includes="**/*.so" />
     <fileset dir="${OPENCV_LIB_DIR}" includes="**/*.o" />
+    <fileset dir="${OPENCV_LIB_DIR}" includes="**/*.dylib" />
   </path>
 
   <!-- ********************************************************************************-->
@@ -130,7 +130,11 @@
         <attribute name="Class-Path" value="${DIR_CLASS}" />
       </manifest>
       <fileset dir="${OPENCV_LIB_DIR}">
-        <include name="opencv_java460.dll" />
+        <include name="**/*.dll" />
+        <include name="**/*.so" />
+        <include name="**/*.o" />
+        <include name="**/*.a" />
+        <include name="**/*.dylib" />
       </fileset>
       <fileset dir="${DIR_ASSETS}">
         <include name="logo.png" />
